@@ -1,275 +1,485 @@
-let documents = [];
+/* =========================
+   STUDENT DIGITAL LOCKER
+   ========================= */
 
-const fileInput = document.getElementById("fileInput");
-const cameraInput = document.getElementById("cameraInput");
+let documents = [
+    {
+        name: "SSC Certificate.pdf",
+        category: "Education",
+        icon: "📜"
+    },
 
-function openUpload() {
-    document.getElementById("uploadModal").style.display = "block";
-}
+    {
+        name: "Intermediate Marksheet.pdf",
+        category: "Education",
+        icon: "🎓"
+    },
 
-function closeUpload() {
-    document.getElementById("uploadModal").style.display = "none";
-}
+    {
+        name: "Aadhaar Card.pdf",
+        category: "ID Proof",
+        icon: "🪪"
+    }
+];
 
-function chooseFile() {
-    fileInput.click();
-}
+let cameraStream = null;
+let selectedDocument = null;
 
-function openCamera() {
-    cameraInput.click();
-}
 
-function handleFile(file) {
-
-    if (!file) return;
-
-    const nameInput = document.getElementById("documentName");
-
-    let documentName =
-        nameInput.value.trim() ||
-        file.name.replace(/\.[^/.]+$/, "");
-
-    const documentType =
-        document.getElementById("documentType").value;
-
-    const newDocument = {
-        id: Date.now(),
-        name: documentName,
-        type: documentType,
-        fileName: file.name,
-        size: file.size,
-        date: new Date().toLocaleDateString(),
-        verified: false,
-        url: URL.createObjectURL(file)
-    };
-
-    documents.push(newDocument);
-
-    saveDocuments();
-
-    displayDocuments();
-
-    closeUpload();
-
-    document.getElementById("documentName").value = "";
-
-    alert("Document uploaded successfully! 🎉");
-}
-
+/* =========================
+   DISPLAY DOCUMENTS
+   ========================= */
 
 function displayDocuments() {
 
     const container =
-        document.getElementById("documentList");
-
-    const search =
-        document.getElementById("searchInput").value
-        .toLowerCase();
-
-    const filtered =
-        documents.filter(doc =>
-            doc.name.toLowerCase().includes(search) ||
-            doc.type.toLowerCase().includes(search)
-        );
+        document.getElementById("documents");
 
     container.innerHTML = "";
 
-    if (filtered.length === 0) {
+    documents.forEach((doc, index) => {
 
-        container.innerHTML = `
-            <div class="document-card">
-                <div class="document-icon">📭</div>
-                <h3>No documents found</h3>
-                <p>Upload your first academic document.</p>
-            </div>
-        `;
+        const card =
+            document.createElement("div");
 
-        updateStats();
-        return;
-    }
-
-    filtered.forEach(doc => {
-
-        const card = document.createElement("div");
-
-        card.className = "document-card";
+        card.className = "document";
 
         card.innerHTML = `
+
             <div class="document-icon">
-                ${getIcon(doc.type)}
+                ${doc.icon}
             </div>
 
             <h3>${doc.name}</h3>
 
             <p>
-                ${doc.type}<br>
-                Uploaded: ${doc.date}
+                ${doc.category}
+                • Stored securely 🔒
             </p>
 
-            <div class="verified">
-                ${doc.verified ? "✓ Verified" : "○ Pending Verification"}
-            </div>
+            <button
+                class="view"
+                onclick="viewDocument(${index})">
 
-            <div class="document-actions">
+                👁 View
 
-                <button
-                    class="view-btn"
-                    onclick="viewDocument(${doc.id})">
-                    View
-                </button>
+            </button>
 
-                <button
-                    class="delete-btn"
-                    onclick="deleteDocument(${doc.id})">
-                    Delete
-                </button>
+            <button
+                class="delete"
+                onclick="deleteDocument(${index})">
 
-            </div>
+                🗑 Delete
+
+            </button>
+
         `;
 
         container.appendChild(card);
     });
 
-    updateStats();
+    document.getElementById("documentCount")
+        .innerText = documents.length;
 }
 
 
-function getIcon(type) {
+/* =========================
+   UPLOAD MODAL
+   ========================= */
 
-    switch(type) {
+function openUpload() {
 
-        case "Certificate":
-            return "🏆";
+    document.getElementById("uploadModal")
+        .style.display = "flex";
+}
 
-        case "Marksheet":
-            return "📊";
 
-        case "ID Proof":
-            return "🪪";
+function closeUpload() {
 
-        case "Bonafide":
-            return "📜";
+    document.getElementById("uploadModal")
+        .style.display = "none";
+}
 
-        case "Resume":
-            return "📄";
 
-        default:
-            return "📁";
+/* =========================
+   CAMERA
+   ========================= */
+
+async function openCamera() {
+
+    closeUpload();
+
+    document.getElementById("cameraModal")
+        .style.display = "flex";
+
+    try {
+
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+
+            throw new Error("Camera unavailable");
+        }
+
+        cameraStream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video: {
+                    facingMode: {
+                        ideal: "environment"
+                    }
+                },
+
+                audio: false
+
+            });
+
+        document.getElementById("camera")
+            .srcObject = cameraStream;
+
+    }
+
+    catch (error) {
+
+        document.getElementById("cameraError")
+            .innerText =
+            "Camera permission denied or unavailable. " +
+            "Please allow camera access or use Upload from Files.";
+
     }
 }
 
 
-function viewDocument(id) {
+/* =========================
+   CAPTURE DOCUMENT
+   ========================= */
 
-    const doc = documents.find(d => d.id === id);
+function captureDocument() {
 
-    if (!doc) return;
+    const video =
+        document.getElementById("camera");
 
-    window.open(doc.url, "_blank");
+    const canvas =
+        document.getElementById("canvas");
+
+    if (!video.videoWidth) {
+
+        alert("Camera is not ready. Please try again.");
+
+        return;
+    }
+
+    canvas.width =
+        video.videoWidth;
+
+    canvas.height =
+        video.videoHeight;
+
+    const context =
+        canvas.getContext("2d");
+
+    context.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    const image =
+        canvas.toDataURL("image/jpeg");
+
+    selectedDocument = {
+
+        name: "Scanned Document",
+
+        category: "Other",
+
+        image: image
+
+    };
+
+    closeCamera();
+
+    openSaveModal();
+
 }
 
 
-function deleteDocument(id) {
+/* =========================
+   CLOSE CAMERA
+   ========================= */
 
-    const confirmDelete =
-        confirm("Are you sure you want to delete this document?");
+function closeCamera() {
 
-    if (!confirmDelete) return;
+    if (cameraStream) {
 
-    documents =
-        documents.filter(doc => doc.id !== id);
+        cameraStream
+            .getTracks()
+            .forEach(track => track.stop());
 
-    saveDocuments();
+        cameraStream = null;
+    }
+
+    document.getElementById("cameraModal")
+        .style.display = "none";
+}
+
+
+/* =========================
+   FILE UPLOAD
+   ========================= */
+
+function selectFile(event) {
+
+    const file =
+        event.target.files[0];
+
+    if (!file) return;
+
+    selectedDocument = {
+
+        name: file.name,
+
+        category: "Other",
+
+        file: file,
+
+        image: null
+
+    };
+
+    closeUpload();
+
+    const reader =
+        new FileReader();
+
+    reader.onload = function(e) {
+
+        selectedDocument.image =
+            e.target.result;
+
+        openSaveModal();
+
+    };
+
+    reader.readAsDataURL(file);
+}
+
+
+/* =========================
+   SAVE MODAL
+   ========================= */
+
+function openSaveModal() {
+
+    document.getElementById("saveModal")
+        .style.display = "flex";
+
+    const input =
+        document.getElementById("documentName");
+
+    input.value =
+        selectedDocument.name
+        .replace(/\.[^/.]+$/, "");
+
+    const preview =
+        document.getElementById("preview");
+
+    if (selectedDocument.image) {
+
+        preview.src =
+            selectedDocument.image;
+
+        preview.style.display =
+            "block";
+
+    } else {
+
+        preview.style.display =
+            "none";
+    }
+}
+
+
+function closeSave() {
+
+    document.getElementById("saveModal")
+        .style.display = "none";
+}
+
+
+/* =========================
+   SAVE DOCUMENT
+   ========================= */
+
+function saveDocument() {
+
+    const name =
+        document.getElementById("documentName")
+            .value
+            .trim();
+
+    const category =
+        document.getElementById("category")
+            .value;
+
+    if (!name) {
+
+        alert("Please enter a document name.");
+
+        return;
+    }
+
+    let extension = "jpg";
+
+    if (
+        selectedDocument.file &&
+        selectedDocument.file.name.includes(".")
+    ) {
+
+        extension =
+            selectedDocument.file.name
+            .split(".")
+            .pop();
+
+    }
+
+    documents.unshift({
+
+        name: name + "." + extension,
+
+        category: category,
+
+        icon:
+            category === "Education"
+                ? "🎓"
+                : category === "ID Proof"
+                ? "🪪"
+                : "📄"
+
+    });
 
     displayDocuments();
-}
 
+    closeSave();
 
-function updateStats() {
-
-    document.getElementById("documentCount")
-        .textContent = documents.length;
-
-    const verified =
-        documents.filter(doc => doc.verified).length;
-
-    document.getElementById("verifiedCount")
-        .textContent = verified;
-
-    const totalBytes =
-        documents.reduce(
-            (total, doc) => total + doc.size,
-            0
-        );
-
-    document.getElementById("storageCount")
-        .textContent = formatSize(totalBytes);
-}
-
-
-function formatSize(bytes) {
-
-    if (bytes === 0)
-        return "0 KB";
-
-    const kb = bytes / 1024;
-
-    if (kb < 1024)
-        return kb.toFixed(1) + " KB";
-
-    return (kb / 1024).toFixed(1) + " MB";
-}
-
-
-function saveDocuments() {
-
-    // Save document information only.
-    // Browser object URLs are temporary.
-
-    const data = documents.map(doc => ({
-        id: doc.id,
-        name: doc.name,
-        type: doc.type,
-        fileName: doc.fileName,
-        size: doc.size,
-        date: doc.date,
-        verified: doc.verified
-    }));
-
-    localStorage.setItem(
-        "studentDocuments",
-        JSON.stringify(data)
+    showToast(
+        "✅ Document uploaded successfully!"
     );
 }
 
 
-function loadDocuments() {
+/* =========================
+   SEARCH
+   ========================= */
 
-    const saved =
-        localStorage.getItem("studentDocuments");
+function searchDocuments() {
 
-    if (saved) {
+    const query =
+        document.getElementById("search")
+            .value
+            .toLowerCase();
 
-        documents =
-            JSON.parse(saved).map(doc => ({
-                ...doc,
-                url: "#"
-            }));
-    }
+    const cards =
+        document.querySelectorAll(".document");
 
-    displayDocuments();
+    cards.forEach(card => {
+
+        const text =
+            card.innerText.toLowerCase();
+
+        card.style.display =
+            text.includes(query)
+                ? "block"
+                : "none";
+    });
 }
 
 
-window.onclick = function(event) {
+/* =========================
+   DELETE
+   ========================= */
 
-    const modal =
-        document.getElementById("uploadModal");
+function deleteDocument(index) {
 
-    if (event.target === modal) {
-        closeUpload();
-    }
-};
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete this document?"
+        );
+
+    if (!confirmDelete) return;
+
+    documents.splice(index, 1);
+
+    displayDocuments();
+
+    showToast(
+        "🗑 Document deleted"
+    );
+}
 
 
-loadDocuments();
+/* =========================
+   VIEW
+   ========================= */
+
+function viewDocument(index) {
+
+    alert(
+        "📄 Document\n\n" +
+
+        "Name: " +
+        documents[index].name +
+
+        "\nCategory: " +
+        documents[index].category +
+
+        "\n\n🔒 Prototype preview"
+    );
+}
+
+
+/* =========================
+   PERSONAL INFORMATION
+   ========================= */
+
+function showInfo() {
+
+    document.getElementById("infoModal")
+        .style.display = "flex";
+}
+
+
+function closeInfo() {
+
+    document.getElementById("infoModal")
+        .style.display = "none";
+}
+
+
+/* =========================
+   TOAST
+   ========================= */
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.innerText = message;
+
+    toast.style.display = "block";
+
+    setTimeout(() => {
+
+        toast.style.display = "none";
+
+    }, 2500);
+}
+
+
+/* =========================
+   INITIAL LOAD
+   ========================= */
+
+displayDocuments();
