@@ -3,247 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Digital Locker</title>
+    <title>LockerX | Student Digital Locker</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header>
-    <div class="logo">🎓 Student Digital Locker</div>
-
-    <nav>
-        <a href="#dashboard">Dashboard</a>
-        <a href="#documents">Documents</a>
-        <a href="#reviews">Reviews</a>
-    </nav>
-
-    <button class="profile-btn">👤 Student</button>
+    <div class="logo">🔐 <span>Locker</span>X</div>
+    <div class="profile">👩‍🎓 Pranathi | B.Tech CSE</div>
 </header>
 
-<section class="hero" id="dashboard">
+<div class="layout">
 
-    <div class="hero-text">
-        <p class="tag">SMART • SECURE • SIMPLE</p>
+    <aside>
+        <h2>LockerX</h2>
+        <button class="active">🏠 Dashboard</button>
+        <button onclick="openUpload()">📤 Upload Document</button>
+        <button onclick="showInfo()">👤 My Information</button>
+        <button>🔔 Notifications</button>
+        <button>⚙ Settings</button>
 
-        <h1>Your Documents.<br>
-            <span>One Digital Locker.</span>
-        </h1>
+        <p class="privacy">🔒 Your documents are private</p>
+    </aside>
 
-        <p>
-            Store, manage and access your academic documents
-            anytime from one convenient digital platform.
-        </p>
+    <main>
 
-        <button onclick="openUpload()" class="primary-btn">
-            + Upload Document
-        </button>
-    </div>
+        <section class="hero">
+            <div>
+                <small>PERSONAL DIGITAL IDENTITY</small>
+                <h1>Student Digital Locker</h1>
+                <p>
+                    One secure place for all your important student documents.
+                </p>
 
-    <div class="hero-card">
-        <div class="lock-icon">🔐</div>
-        <h3>Digital Security</h3>
-        <p>Your academic documents organized in one place.</p>
-    </div>
+                <button class="primary" onclick="openUpload()">
+                    + Add Document
+                </button>
+            </div>
 
-</section>
+            <div class="locker-icon">🔐</div>
+        </section>
 
+        <section class="stats">
 
-<section class="stats">
+            <div class="card">
+                <span>📄</span>
+                <p>Total Documents</p>
+                <h2 id="documentCount">3</h2>
+            </div>
 
-    <div class="stat-card">
-        <span>📁</span>
-        <h2 id="documentCount">0</h2>
-        <p>Total Documents</p>
-    </div>
+            <div class="card">
+                <span>💾</span>
+                <p>Storage Used</p>
+                <h2>24 MB</h2>
+            </div>
 
-    <div class="stat-card">
-        <span>✅</span>
-        <h2 id="verifiedCount">0</h2>
-        <p>Verified Documents</p>
-    </div>
+            <div class="card">
+                <span>🗂️</span>
+                <p>Categories</p>
+                <h2>5</h2>
+            </div>
 
-    <div class="stat-card">
-        <span>💾</span>
-        <h2 id="storageCount">0 KB</h2>
-        <p>Storage Used</p>
-    </div>
+            <div class="card">
+                <span>🛡️</span>
+                <p>Security</p>
+                <h2 class="safe">Protected</h2>
+            </div>
 
-</section>
+        </section>
 
-
-<section class="documents-section" id="documents">
-
-    <div class="section-heading">
-        <div>
-            <p class="tag">MY LOCKER</p>
+        <div class="section-title">
             <h2>My Documents</h2>
+
+            <input
+                type="text"
+                id="search"
+                placeholder="🔍 Search documents..."
+                onkeyup="searchDocuments()"
+            >
         </div>
 
-        <button onclick="openUpload()" class="primary-btn">
-            + Add Document
-        </button>
-    </div>
+        <div id="documents" class="documents"></div>
 
-    <div class="search-box">
-        🔎
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search documents..."
-            oninput="displayDocuments()"
-        >
-    </div>
-
-    <div id="documentList" class="document-grid"></div>
-
-</section>
+    </main>
+</div>
 
 
-<section class="upload-section">
-
-    <div class="upload-card">
-
-        <div class="upload-icon">📤</div>
-
-        <h2>Upload Your Documents</h2>
-
-        <p>
-            Upload certificates, marksheets, ID cards and other
-            academic documents.
-        </p>
-
-        <div class="upload-buttons">
-
-            <button class="upload-btn" onclick="chooseFile()">
-                📂 Choose from Files
-            </button>
-
-            <button class="upload-btn" onclick="openCamera()">
-                📷 Use Camera
-            </button>
-
-        </div>
-
-        <input
-            type="file"
-            id="fileInput"
-            accept=".pdf,.jpg,.jpeg,.png"
-            hidden
-            onchange="handleFile(this.files[0])"
-        >
-
-        <input
-            type="file"
-            id="cameraInput"
-            accept="image/*"
-            capture="environment"
-            hidden
-            onchange="handleFile(this.files[0])"
-        >
-
-        <p class="small-text">
-            Supported: PDF, JPG, JPEG, PNG
-        </p>
-
-    </div>
-
-</section>
-
-
-<section class="reviews" id="reviews">
-
-    <p class="tag">STUDENT VOICES</p>
-    <h2>What Students Say</h2>
-
-    <div class="review-grid">
-
-        <div class="review-card">
-            <div>⭐⭐⭐⭐⭐</div>
-            <p>
-                "I can keep all my certificates in one place.
-                It saves a lot of time."
-            </p>
-            <strong>— Ananya, CSE Student</strong>
-        </div>
-
-        <div class="review-card">
-            <div>⭐⭐⭐⭐⭐</div>
-            <p>
-                "The camera upload feature makes adding documents
-                very easy."
-            </p>
-            <strong>— Rahul, ECE Student</strong>
-        </div>
-
-        <div class="review-card">
-            <div>⭐⭐⭐⭐⭐</div>
-            <p>
-                "A simple and useful digital locker for students."
-            </p>
-            <strong>— Priya, IT Student</strong>
-        </div>
-
-    </div>
-
-</section>
-
-
-<footer>
-
-    <h3>🎓 Student Digital Locker</h3>
-
-    <p>
-        One platform for your academic documents.
-    </p>
-
-    <p>© 2026 Student Digital Locker</p>
-
-</footer>
-
-
-<!-- Upload Modal -->
+<!-- UPLOAD MODAL -->
 
 <div id="uploadModal" class="modal">
 
-    <div class="modal-content">
+    <div class="modal-box">
 
-        <span class="close" onclick="closeUpload()">×</span>
+        <div class="modal-header">
+            <h2>📂 Add Document</h2>
+            <button onclick="closeUpload()">✕</button>
+        </div>
 
-        <h2>Upload Document</h2>
+        <p>Select how you want to add your document.</p>
+
+        <div class="upload-options">
+
+            <!-- CAMERA -->
+
+            <button class="upload-option" onclick="openCamera()">
+
+                <div>📷</div>
+
+                <h3>Scan with Camera</h3>
+
+                <p>
+                    Capture a document using your phone camera
+                    or laptop webcam.
+                </p>
+
+            </button>
+
+
+            <!-- FILE -->
+
+            <label class="upload-option">
+
+                <div>📁</div>
+
+                <h3>Upload from Files</h3>
+
+                <p>
+                    Upload PDF, JPG, JPEG or PNG files.
+                </p>
+
+                <input
+                    type="file"
+                    id="fileInput"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    hidden
+                    onchange="selectFile(event)"
+                >
+
+            </label>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- CAMERA MODAL -->
+
+<div id="cameraModal" class="modal">
+
+    <div class="modal-box camera-box">
+
+        <div class="modal-header">
+            <h2>📷 Scan Document</h2>
+
+            <button onclick="closeCamera()">✕</button>
+        </div>
+
+        <p>
+            Position your document inside the camera.
+        </p>
+
+        <video id="camera" autoplay playsinline></video>
+
+        <canvas id="canvas"></canvas>
+
+        <p id="cameraError" class="error"></p>
+
+        <button class="capture" onclick="captureDocument()">
+            📸 Capture Document
+        </button>
+
+    </div>
+</div>
+
+
+<!-- SAVE DOCUMENT MODAL -->
+
+<div id="saveModal" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2>Save Document</h2>
+
+            <button onclick="closeSave()">✕</button>
+
+        </div>
+
+        <img
+            id="preview"
+            class="preview"
+            style="display:none;"
+        >
 
         <label>Document Name</label>
 
         <input
             type="text"
             id="documentName"
-            placeholder="Example: 10th Marksheet"
+            placeholder="Example: SSC Certificate"
         >
 
-        <label>Document Type</label>
+        <label>Category</label>
 
-        <select id="documentType">
+        <select id="category">
 
-            <option>Certificate</option>
-            <option>Marksheet</option>
+            <option>Education</option>
             <option>ID Proof</option>
-            <option>Bonafide</option>
+            <option>College Documents</option>
+            <option>Government Documents</option>
             <option>Resume</option>
             <option>Other</option>
 
         </select>
 
         <button
-            class="primary-btn full"
-            onclick="chooseFile()"
+            class="save"
+            onclick="saveDocument()"
         >
-            Select File
+            🔐 Save to Digital Locker
         </button>
 
     </div>
-
 </div>
 
+
+<!-- INFORMATION MODAL -->
+
+<div id="infoModal" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2>👤 My Information</h2>
+
+            <button onclick="closeInfo()">✕</button>
+
+        </div>
+
+        <div class="info">
+
+            <p><b>Name:</b> Pranathi</p>
+
+            <p><b>Course:</b> B.Tech CSE</p>
+
+            <p><b>Student ID:</b> STU2026</p>
+
+            <p><b>Email:</b> student@example.com</p>
+
+            <p><b>Status:</b> 🔒 Protected</p>
+
+        </div>
+
+    </div>
+</div>
+
+
+<div id="toast"></div>
 
 <script src="script.js"></script>
 
