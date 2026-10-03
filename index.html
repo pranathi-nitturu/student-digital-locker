@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Digital Locker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🎓 Student Digital Locker</div>
+
+    <nav>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#documents">Documents</a>
+        <a href="#reviews">Reviews</a>
+    </nav>
+
+    <button class="profile-btn">👤 Student</button>
+</header>
+
+<section class="hero" id="dashboard">
+
+    <div class="hero-text">
+        <p class="tag">SMART • SECURE • SIMPLE</p>
+
+        <h1>Your Documents.<br>
+            <span>One Digital Locker.</span>
+        </h1>
+
+        <p>
+            Store, manage and access your academic documents
+            anytime from one convenient digital platform.
+        </p>
+
+        <button onclick="openUpload()" class="primary-btn">
+            + Upload Document
+        </button>
+    </div>
+
+    <div class="hero-card">
+        <div class="lock-icon">🔐</div>
+        <h3>Digital Security</h3>
+        <p>Your academic documents organized in one place.</p>
+    </div>
+
+</section>
+
+
+<section class="stats">
+
+    <div class="stat-card">
+        <span>📁</span>
+        <h2 id="documentCount">0</h2>
+        <p>Total Documents</p>
+    </div>
+
+    <div class="stat-card">
+        <span>✅</span>
+        <h2 id="verifiedCount">0</h2>
+        <p>Verified Documents</p>
+    </div>
+
+    <div class="stat-card">
+        <span>💾</span>
+        <h2 id="storageCount">0 KB</h2>
+        <p>Storage Used</p>
+    </div>
+
+</section>
+
+
+<section class="documents-section" id="documents">
+
+    <div class="section-heading">
+        <div>
+            <p class="tag">MY LOCKER</p>
+            <h2>My Documents</h2>
+        </div>
+
+        <button onclick="openUpload()" class="primary-btn">
+            + Add Document
+        </button>
+    </div>
+
+    <div class="search-box">
+        🔎
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search documents..."
+            oninput="displayDocuments()"
+        >
+    </div>
+
+    <div id="documentList" class="document-grid"></div>
+
+</section>
+
+
+<section class="upload-section">
+
+    <div class="upload-card">
+
+        <div class="upload-icon">📤</div>
+
+        <h2>Upload Your Documents</h2>
+
+        <p>
+            Upload certificates, marksheets, ID cards and other
+            academic documents.
+        </p>
+
+        <div class="upload-buttons">
+
+            <button class="upload-btn" onclick="chooseFile()">
+                📂 Choose from Files
+            </button>
+
+            <button class="upload-btn" onclick="openCamera()">
+                📷 Use Camera
+            </button>
+
+        </div>
+
+        <input
+            type="file"
+            id="fileInput"
+            accept=".pdf,.jpg,.jpeg,.png"
+            hidden
+            onchange="handleFile(this.files[0])"
+        >
+
+        <input
+            type="file"
+            id="cameraInput"
+            accept="image/*"
+            capture="environment"
+            hidden
+            onchange="handleFile(this.files[0])"
+        >
+
+        <p class="small-text">
+            Supported: PDF, JPG, JPEG, PNG
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="reviews" id="reviews">
+
+    <p class="tag">STUDENT VOICES</p>
+    <h2>What Students Say</h2>
+
+    <div class="review-grid">
+
+        <div class="review-card">
+            <div>⭐⭐⭐⭐⭐</div>
+            <p>
+                "I can keep all my certificates in one place.
+                It saves a lot of time."
+            </p>
+            <strong>— Ananya, CSE Student</strong>
+        </div>
+
+        <div class="review-card">
+            <div>⭐⭐⭐⭐⭐</div>
+            <p>
+                "The camera upload feature makes adding documents
+                very easy."
+            </p>
+            <strong>— Rahul, ECE Student</strong>
+        </div>
+
+        <div class="review-card">
+            <div>⭐⭐⭐⭐⭐</div>
+            <p>
+                "A simple and useful digital locker for students."
+            </p>
+            <strong>— Priya, IT Student</strong>
+        </div>
+
+    </div>
+
+</section>
+
+
+<footer>
+
+    <h3>🎓 Student Digital Locker</h3>
+
+    <p>
+        One platform for your academic documents.
+    </p>
+
+    <p>© 2026 Student Digital Locker</p>
+
+</footer>
+
+
+<!-- Upload Modal -->
+
+<div id="uploadModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close" onclick="closeUpload()">×</span>
+
+        <h2>Upload Document</h2>
+
+        <label>Document Name</label>
+
+        <input
+            type="text"
+            id="documentName"
+            placeholder="Example: 10th Marksheet"
+        >
+
+        <label>Document Type</label>
+
+        <select id="documentType">
+
+            <option>Certificate</option>
+            <option>Marksheet</option>
+            <option>ID Proof</option>
+            <option>Bonafide</option>
+            <option>Resume</option>
+            <option>Other</option>
+
+        </select>
+
+        <button
+            class="primary-btn full"
+            onclick="chooseFile()"
+        >
+            Select File
+        </button>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
